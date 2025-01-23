@@ -76,7 +76,6 @@ public class ModCommands {
         return literal("armourers")
                 .then(ReflectArgumentBuilder.literal("config", ModConfig.Client.class))
                 .then(ReflectArgumentBuilder.literal("debug", ModDebugger.class))
-                .requires(source -> source.hasPermission(2))
                 .then(literal("library").then(literal("reload").executes(Executor::reloadLibrary)).then(literal("auth").executes(Executor::printPrivateKey)))
                 .then(literal("setSkin").then(entities().then(slotNames().then(slots().then(skins().then(skinDying().executes(Executor::setSkin)).executes(Executor::setSkin))).then(skins().then(skinDying().executes(Executor::setSkin)).executes(Executor::setSkin)))))
                 .then(literal("giveSkin").then(players().then(skins().then(skinDying().executes(Executor::giveSkin)).executes(Executor::giveSkin))))
