@@ -62,4 +62,3 @@ jobs:
       with:
         name: forge-${{ matrix.version }}-${{ steps.release-version.outputs.version }}
         path: filtered-forge-artifacts
-        path: forge/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar
