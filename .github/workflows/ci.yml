@@ -8,6 +8,7 @@ jobs:
       matrix:
         version: ["1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1"]
             
+            
     runs-on: ubuntu-latest
 
     steps:
@@ -38,14 +39,27 @@ jobs:
       with:
         arguments: -Pversion=${{ steps.release-version.outputs.version }} build
 
+    - name: Prepare Fabric Artifacts
+      run: |
+        mkdir -p filtered-fabric-artifacts
+        shopt -s extglob
+        cp fabric/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar filtered-fabric-artifacts/ || true
+
+    - name: Prepare Forge Artifacts
+      run: |
+        mkdir -p filtered-forge-artifacts
+        shopt -s extglob
+        cp forge/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar filtered-forge-artifacts/ || true
+
     - name: Upload Fabric ${{ matrix.version }} Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: fabric-${{ matrix.version }}-${{ steps.release-version.outputs.version }}
-        path: fabric/build/libs/!(*-@(dev-shadow|sources|javadoc|)).jar
+        path: filtered-fabric-artifacts
 
     - name: Upload Forge ${{ matrix.version }} Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: forge-${{ matrix.version }}-${{ steps.release-version.outputs.version }}
+        path: filtered-forge-artifacts
         path: forge/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar
