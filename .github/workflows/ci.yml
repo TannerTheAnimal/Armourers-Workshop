@@ -52,13 +52,13 @@ jobs:
         cp forge/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar filtered-forge-artifacts/ || true
 
     - name: Upload Fabric ${{ matrix.version }} Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: fabric-${{ matrix.version }}-${{ steps.release-version.outputs.version }}
         path: filtered-fabric-artifacts
 
     - name: Upload Forge ${{ matrix.version }} Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: forge-${{ matrix.version }}-${{ steps.release-version.outputs.version }}
         path: filtered-forge-artifacts
