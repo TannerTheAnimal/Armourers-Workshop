@@ -73,21 +73,37 @@ public class ModCommands {
 
     // :/armourers setSkin|giveSkin|clearSkin
     public static LiteralArgumentBuilder<CommandSourceStack> commands() {
-        return literal("armourers")
-                .then(ReflectArgumentBuilder.literal("config", ModConfig.Client.class))
-                .then(ReflectArgumentBuilder.literal("debug", ModDebugger.class))
-                .then(literal("library").then(literal("reload").executes(Executor::reloadLibrary)).then(literal("auth").executes(Executor::printPrivateKey)))
-                .then(literal("setSkin").then(entities().then(slotNames().then(slots().then(skins().then(skinDying().executes(Executor::setSkin)).executes(Executor::setSkin))).then(skins().then(skinDying().executes(Executor::setSkin)).executes(Executor::setSkin)))))
-                .then(literal("giveSkin").then(players().then(skins().then(skinDying().executes(Executor::giveSkin)).executes(Executor::giveSkin))))
-                .then(literal("clearSkin").then(entities().then(slotNames().then(slots().executes(Executor::clearSkin))).executes(Executor::clearSkin)))
-                .then(literal("exportSkin").then(skinFormats().then(name().then(scale().executes(Executor::exportSkin)).executes(Executor::exportSkin))))
-                .then(literal("setColor").then(entities().then(dyesSlotNames().then(dyeColor().executes(Executor::setColor)))))
-                .then(literal("rsyncWardrobe").then(players().executes(Executor::resyncWardrobe)))
-                .then(literal("openWardrobe").then(entities().executes(Executor::openWardrobe)))
-                .then(literal("itemSkinnable").then(addOrRemove().then(overrideTypes().executes(Executor::setItemSkinnable))))
-                .then(literal("animation", "<entity_block_target>", ModCommands::animationCommands))
-                .then(literal("setUnlockedSlots").then(entities().then(resizableSlotNames().then(resizableSlotAmounts().executes(Executor::setUnlockedWardrobeSlots)))));
+    return literal("armourers")
+            .then(ReflectArgumentBuilder.literal("config", ModConfig.Client.class).requires(source -> source.hasPermission(2)))
+            .then(ReflectArgumentBuilder.literal("debug", ModDebugger.class).requires(source -> source.hasPermission(2)))
+            .then(literal("library").requires(source -> source.hasPermission(2))
+                .then(literal("reload").executes(Executor::reloadLibrary))
+                .then(literal("auth").executes(Executor::printPrivateKey)))
+            .then(literal("setSkin").requires(source -> source.hasPermission(2))
+                .then(entities().then(slotNames().then(slots().then(skins().then(skinDying().executes(Executor::setSkin)).executes(Executor::setSkin))).then(skins().then(skinDying().executes(Executor::setSkin)).executes(Executor::setSkin)))))
+            .then(literal("giveSkin").requires(source -> source.hasPermission(2))
+                .then(players().then(skins().then(skinDying().executes(Executor::giveSkin)).executes(Executor::giveSkin))))
+            .then(literal("clearSkin").requires(source -> source.hasPermission(2))
+                .then(entities().then(slotNames().then(slots().executes(Executor::clearSkin))).executes(Executor::clearSkin)))
+            .then(literal("exportSkin").requires(source -> source.hasPermission(2))
+                .then(skinFormats().then(name().then(scale().executes(Executor::exportSkin)).executes(Executor::exportSkin))))
+            .then(literal("setColor").requires(source -> source.hasPermission(2))
+                .then(entities().then(dyesSlotNames().then(dyeColor().executes(Executor::setColor)))))
+            .then(literal("rsyncWardrobe").requires(source -> source.hasPermission(2))
+                .then(players().executes(Executor::resyncWardrobe)))
+            .then(literal("openWardrobe").requires(source -> source.hasPermission(2))
+                .then(entities().executes(Executor::openWardrobe)))
+            .then(literal("itemSkinnable").requires(source -> source.hasPermission(2))
+                .then(addOrRemove().then(overrideTypes().executes(Executor::setItemSkinnable))))
+            .then(literal("setUnlockedSlots").requires(source -> source.hasPermission(2))
+                .then(entities().then(resizableSlotNames().then(resizableSlotAmounts().executes(Executor::setUnlockedWardrobeSlots)))))
+            .then(literal("animation") // Animation command with lower permission requirement
+                .requires(source -> source.hasPermission(0))
+                .then(literal("play").then(name().then(properties().executes(Executor::playAnimation)).executes(Executor::playAnimation)))
+                .then(literal("stop").then(name().executes(Executor::stopAnimation)).executes(Executor::stopAnimation))
+                .then(literal("map").then(string("from").then(string("to").executes(Executor::mappingAnimation)))));
     }
+
 
     static LiteralArgumentBuilder<CommandSourceStack> literal(String name) {
         return Commands.literal(name);
